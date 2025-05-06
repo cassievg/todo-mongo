@@ -10,3 +10,5 @@ Currently, two official plugins are available:
 # MongoDB
 
 REST API is made using Node.js, Express.js, and MongoDB. 
+
+Axios is also utilized to ensure changes made in the UI will also affect the database and therefore saved, and will also appear when the page is refreshed.
