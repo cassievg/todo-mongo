@@ -15,19 +15,19 @@ const instance = axios.create({
 });
 
 async function getTodos() {
-    return await instance.get('/')
+    return await instance.get('/');
 }
 
-async function postTodo() {
-    return await instance.post('/')
+async function postTodo(item) {
+    return await instance.post('/', {"task": item});
 }
 
-async function deleteTodo() {
-    return await instance.delete('/:id')
+async function deleteTodo(id) {
+    return await instance.delete('/' + id);
 }
 
-async function putTodo() {
-    return await instance.put('/:id')
+async function putTodo(id, update) {
+    return await instance.put('/' + id, {"task": update});
 }
 
 export const TodoWrapper = () => {
@@ -54,13 +54,16 @@ export const TodoWrapper = () => {
         initTodos();
     }, []);
 
-    const addToDo = toDo => {
+    const addToDo = async toDo => {
+        const todoRes = await postTodo(toDo);
+        const todoData = {...todoRes.data};
         setToDos([...toDos, {
-            id: uuidv4(),
-            task: toDo,
-            completed: false,
+            id: todoData._id,
+            task: todoData.task,
+            completed: todoData.completed,
             isEditing: false
         }]);
+
 
         console.log(toDos);
     }
@@ -70,7 +73,8 @@ export const TodoWrapper = () => {
         todo, completed: !todo.completed} : todo ))
     }
 
-    const deleteToDo = id => {
+    const deleteToDo = async id => {
+        await deleteTodo(id);
         setToDos(toDos.filter(todo => todo.id !== id))
     }
 
@@ -79,7 +83,8 @@ export const TodoWrapper = () => {
             todo, isEditing: !todo.isEditing} : todo));
     }
 
-    const editTask = (updatedTask, id) => {
+    const editTask = async (updatedTask, id) => {
+        await putTodo(id, updatedTask);
         setToDos(toDos.map(todo => todo.id === id ? { ...
             todo, task: updatedTask, isEditing: false } : todo));
     };
